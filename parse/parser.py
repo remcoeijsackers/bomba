@@ -1,13 +1,12 @@
 from sly import Parser
-from lexer import CalcLexer
+from lex.lexer import MainLexer
 
-class CalcParser(Parser):
-    # Get the token list from the lexer (required)
-    tokens = CalcLexer.tokens
+class MainParser(Parser):
+    tokens = MainLexer.tokens
+    #start = "bmba"
 
     def __init__(self):
         self.ids = { }
-    # Grammar rules and actions
 
     @_('PRINT LPAREN expr RPAREN')
     def statement(self, p):
@@ -58,7 +57,7 @@ class CalcParser(Parser):
     @_('expr')
     def statement(self, p):
         return p.expr
-        
+
     @_('term TIMES factor')
     def term(self, p):
         return p.term * p.factor
@@ -79,6 +78,10 @@ class CalcParser(Parser):
     def factor(self, p):
         return p.expr
 
+    @_("START_L NUMBER END_L")
+    def expr(self, p):
+        return p.NUMBER
+
     @_('ID')
     def expr(self, p):
         try:
@@ -88,6 +91,6 @@ class CalcParser(Parser):
                 print("EXIT")
                 exit()
             else:
-                print(f'Undefined name {p.ID!r}')
+                print('Undefined name {}'.format(p))
                 return 0
             

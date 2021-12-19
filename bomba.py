@@ -1,10 +1,10 @@
-from parser import CalcParser
-from lexer import CalcLexer
+from parse.parser import MainParser
+from lex.lexer import MainLexer
 import fire 
 
 if __name__ == '__main__':
-    lexer = CalcLexer()
-    parser = CalcParser()
+    lexer = MainLexer()
+    parser = MainParser()
 
     while True:
         def run(filen=None):
