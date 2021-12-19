@@ -1,10 +1,18 @@
+import collections
+import math
+
 from sly import Lexer
+
+Variable = collections.namedtuple('Variable', ['name'])
+Expression = collections.namedtuple('Expression', ['operation', 'arguments'])
+Statement = collections.namedtuple('Statement', ['operation', 'arguments'])
+
 
 class MainLexer(Lexer):
     # Set of token names.   This is always required
-    tokens = { NUMBER, ID, WHILE, IF, ELSE, PRINT,
+    tokens = { NUMBER, ID, WHILE, IF, THEN, ELSE, PRINT,
                PLUS, MINUS, TIMES, DIVIDE, PLUSASSIGN, ASSIGN,
-               EQ, LT, LE, GT, GE, NE, LPAREN, RPAREN, LBRACK, RBRACK, START_L, END_L }
+               EQ, LT, LE, GT, GE, NE, LPAREN, RPAREN, LBRACK, RBRACK, START_L, END_L, COLON, STRING }
 
 
     literals = { '(', ')', '{', '}', ';' , '[', ']'}
@@ -13,6 +21,7 @@ class MainLexer(Lexer):
     ignore = ' \t'
 
     # Regular expression rules for tokens
+    COLON = r':'
     PLUS    = r'\+'
     MINUS   = r'-'
     TIMES   = r'\*'
@@ -31,6 +40,10 @@ class MainLexer(Lexer):
     RBRACK = r'\]'
     START_L = r'startl'
     END_L = r'endl'
+    IF = r'IF'
+    THEN = r'THEN'
+    PRINT = r'PRINT'
+    ELSE = r'ELSE'
 
     
     @_(r'\d+')
@@ -38,14 +51,18 @@ class MainLexer(Lexer):
         t.value = int(t.value)
         return t
 
+    @_(r'"[^"]*"?')
+    def STRING(self, token):
+        token.value = token.value[1:]
+
+        if token.value.endswith('"'):
+            token.value = token.value[:-1]
+
+        return token
+        
     # Identifiers and keywords
     ID = r'[a-zA-Z_][a-zA-Z0-9_]*'
-    ID['if'] = IF
-    ID['else'] = ELSE
     ID['while'] = WHILE
-    ID['print'] = PRINT
-    #ID['startl'] = START_L
-    #ID['endl'] = END_L
 
     ignore_comment = r'\#.*'
 
