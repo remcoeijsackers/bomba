@@ -7,6 +7,8 @@ PRINT("a = 1")
 a = 1 
 PRINT("c = 4")
 c = 4
+PRINT("b > 1")
+b > 1
 PRINT("print no when false")
 IF 0 THEN PRINT("Yes") ELSE PRINT("No")
 PRINT("print yes when true")

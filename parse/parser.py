@@ -76,6 +76,10 @@ class MainParser(Parser):
     def expr(self, p):
         return p.expr - p.term
 
+    @_('expr LT term')
+    def statement(self, p):
+        return p.expr
+
     @_('term')
     def expr(self, p):
         return p.term
