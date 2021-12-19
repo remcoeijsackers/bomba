@@ -1,41 +1,67 @@
+import collections
+import math
+
 from sly import Parser
 from lex.lexer import MainLexer
+
+
+Variable = collections.namedtuple('Variable', ['name'])
+Expression = collections.namedtuple('Expression', ['operation', 'arguments'])
+Statement = collections.namedtuple('Statement', ['operation', 'arguments'])
 
 class MainParser(Parser):
     tokens = MainLexer.tokens
     #start = "bmba"
+    precedence = (
+        ('nonassoc', IF, THEN),
+        ('left', EQ),
+        ('nonassoc', ELSE),
+    )
 
     def __init__(self):
         self.ids = { }
 
+    @_('statement')
+    def statements(self, parsed):
+        if parsed.statement:
+            return parsed.statement
+
+    @_('statements COLON statement')
+    def statements(self, parsed):
+        parsed.statements.append(parsed.statement)
+        return parsed.statements
+
+    @_(
+        'statements COLON empty',
+        'empty COLON statements',
+    )
+    def statements(self, parsed):
+        return parsed.statements
+
+    @_('')
+    def empty(self, parsed):
+        pass
+
+    @_('IF expr THEN statements')
+    def statement(self, parsed):
+        if parsed.expr:
+            return parsed.statements
+
+    @_('IF expr THEN statements ELSE statement')
+    def statement(self, parsed):
+        if parsed.expr == True:
+            return parsed.statements
+        else:
+            return parsed.statement
+
     @_('PRINT LPAREN expr RPAREN')
     def statement(self, p):
-        print(p[2])
-        
-    @_('IF LPAREN ID EQ ID RPAREN')
-    def statement(self, p):
-        return p.ID0 == p.ID1
-
-    @_('IF LPAREN ID LE ID RPAREN')
-    def statement(self, p):
-        return p.ID0 <= p.ID1
-
-    @_('IF LPAREN ID LT ID RPAREN')
-    def statement(self, p):
-        return p.ID0 < p.ID1
-
-    @_('IF LPAREN ID GE ID RPAREN')
-    def statement(self, p):
-        return p.ID0 >= p.ID1
-
-    @_('IF LPAREN ID GT ID RPAREN')
-    def statement(self, p):
-        return p.ID0 > p.ID1
+        return p[2]
 
     @_('ID PLUSASSIGN expr')
     def statement(self, p):
         self.ids[p.ID] += p.expr
-        return p.expr
+        return self.ids[p.ID]
     
     @_('ID ASSIGN expr')
     def statement(self, p):
@@ -81,6 +107,13 @@ class MainParser(Parser):
     @_("START_L NUMBER END_L")
     def expr(self, p):
         return p.NUMBER
+
+    @_(
+        'NUMBER',
+        'STRING',
+    )
+    def expr(self, parsed):
+        return parsed[0]
 
     @_('ID')
     def expr(self, p):
