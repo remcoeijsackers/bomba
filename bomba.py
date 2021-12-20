@@ -9,7 +9,7 @@ if __name__ == '__main__':
     while True:
         def run(filen=None):
             if filen is None:
-                text = input('ice: ')
+                text = input('bomba: ')
                 result = parser.parse(lexer.tokenize(text))
                 print(result)
             else:

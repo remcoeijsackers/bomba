@@ -12,7 +12,7 @@ class MainLexer(Lexer):
     # Set of token names.   This is always required
     tokens = { NUMBER, ID, WHILE, IF, THEN, ELSE, PRINT,
                PLUS, MINUS, TIMES, DIVIDE, PLUSASSIGN, ASSIGN,
-               EQ, LT, LE, GT, GE, NE, LPAREN, RPAREN, LBRACK, RBRACK, START_L, END_L, COLON, STRING }
+               EQ, LT, LE, GT, GE, NE, LPAREN, RPAREN, LBRACK, RBRACK, START_L, END_L, COLON, STRING, NOOTP }
 
 
     literals = { '(', ')', '{', '}', ';' , '[', ']'}
@@ -44,6 +44,8 @@ class MainLexer(Lexer):
     THEN = r'THEN'
     PRINT = r'PRINT'
     ELSE = r'ELSE'
+    NOOTP = r'NOOTP'
+    #COMMENT = r"(?:#|').*"
 
     
     @_(r'\d+')
@@ -62,9 +64,8 @@ class MainLexer(Lexer):
         
     # Identifiers and keywords
     ID = r'[a-zA-Z_][a-zA-Z0-9_]*'
-    ID['while'] = WHILE
 
-    ignore_comment = r'\#.*'
+    #ignore_comment = r'\#.*'
 
     # Line number tracking
     @_(r'\n+')
@@ -73,6 +74,10 @@ class MainLexer(Lexer):
     
     @_(r"[ \t\n]+")
     def ignore_whitespace(self, t):
+        self.lineno += t.value.count("\n")
+
+    @_(r'\#.*')
+    def ignore_comment(self, t):
         self.lineno += t.value.count("\n")
 
     def error(self, t):
