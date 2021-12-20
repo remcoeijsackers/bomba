@@ -7,11 +7,13 @@ PRINT("a = 1")
 a = 1 
 PRINT("c = 4")
 c = 4
-PRINT("b > 1")
-b > 1
+PRINT("Assign check to var")
+d = c > b
+PRINT("d")
+d
 PRINT("print no when false")
-IF 0 THEN PRINT("Yes") ELSE PRINT("No")
+IF (c > b) THEN PRINT("Yes") ELSE PRINT("No")
 PRINT("print yes when true")
-IF 1 THEN PRINT("Yes") ELSE PRINT("No")
+IF (1) THEN PRINT("Yes") ELSE PRINT("No")
 EXIT
 

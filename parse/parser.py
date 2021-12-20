@@ -21,6 +21,26 @@ class MainParser(Parser):
     def __init__(self):
         self.ids = { }
 
+    @_('LPAREN ID EQ ID RPAREN')
+    def statement(self, p):
+        return p.ID0 == p.ID1
+
+    @_('LPAREN ID LE ID RPAREN')
+    def statement(self, p):
+        return p.ID0 <= p.ID1
+
+    @_('LPAREN ID LT ID RPAREN')
+    def statement(self, p):
+        return p.ID0 < p.ID1
+
+    @_('LPAREN ID GE ID RPAREN')
+    def statement(self, p):
+        return p.ID0 >= p.ID1
+
+    @_('ID GT ID')
+    def expr(self, p):
+        return p.ID0 > p.ID1
+
     @_('statement')
     def statements(self, parsed):
         if parsed.statement:
@@ -42,12 +62,14 @@ class MainParser(Parser):
     def empty(self, parsed):
         pass
 
-    @_('IF expr THEN statements')
+    @_('IF LPAREN expr RPAREN THEN statements')
     def statement(self, parsed):
         if parsed.expr:
             return parsed.statements
 
-    @_('IF expr THEN statements ELSE statement')
+    @_('''IF LPAREN expr RPAREN
+            THEN statements 
+        ELSE statement''')
     def statement(self, parsed):
         if parsed.expr == True:
             return parsed.statements
