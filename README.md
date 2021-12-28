@@ -1,15 +1,10 @@
 ### Bombalang
 
-A bombastic language.
+A bombastic language based on [SLY](https://github.com/dabeaz/sly). 
 
 
 ## Purpose
 A pet project 
 
-## Design 
-Based on a combination of principles, the language centers around the idea of consoles and cartridges. 
-* A console has a predifined set of 'hardware' and a finite scope of operations. only functions with a cartridge.
-* A cartridge is made with console(s) in mind, and performs specific tasks based within the console. 
-
-## Syntax
-
+## Usage
+download the repo, install the requirements, run with python.

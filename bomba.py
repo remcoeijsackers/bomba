@@ -17,6 +17,9 @@ if __name__ == '__main__':
                     for line in text:
                         result = parser.parse(lexer.tokenize(line))
                         print(result)
+                    #result = parser.parse(lexer.tokenize(text.read()))
+                #print(result)
+                #exit()
         try:
             fire.Fire(run)
         except EOFError:

@@ -12,13 +12,10 @@ class MainLexer(Lexer):
     # Set of token names.   This is always required
     tokens = { NUMBER, ID, WHILE, IF, THEN, ELSE, PRINT,
                PLUS, MINUS, TIMES, DIVIDE, PLUSASSIGN, ASSIGN,
-               EQ, LT, LE, GT, GE, NE, LPAREN, RPAREN, LBRACK, RBRACK, START_L, END_L, COLON, STRING, NOOTP }
+               EQ, LT, LE, GT, GE, NE, LPAREN, RPAREN, LBRACK, RBRACK, START_L, END_L, COLON, STRING, NOOTP, EXIT }
 
 
     literals = { '(', ')', '{', '}', ';' , '[', ']'}
-
-    # String containing ignored characters
-    ignore = ' \t'
 
     # Regular expression rules for tokens
     COLON = r':'
@@ -45,6 +42,7 @@ class MainLexer(Lexer):
     PRINT = r'PRINT'
     ELSE = r'ELSE'
     NOOTP = r'NOOTP'
+    EXIT = r'EXIT'
     #COMMENT = r"(?:#|').*"
 
     
@@ -65,12 +63,10 @@ class MainLexer(Lexer):
     # Identifiers and keywords
     ID = r'[a-zA-Z_][a-zA-Z0-9_]*'
 
-    #ignore_comment = r'\#.*'
-
     # Line number tracking
     @_(r'\n+')
     def ignore_newline(self, t):
-        self.lineno += t.value.count('\n')
+        self.lineno += len(t.value)
     
     @_(r"[ \t\n]+")
     def ignore_whitespace(self, t):

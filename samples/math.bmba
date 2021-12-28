@@ -1,4 +1,4 @@
-PRINT("hi")
+z = 2
 PRINT("b = 1")
 b = 1
 PRINT("b += 1")
@@ -8,7 +8,7 @@ a = 1
 PRINT("c = 4")
 c = 4
 PRINT("Assign check to var")
-d = c > b
+d = (c > b)
 PRINT("d")
 d
 PRINT("print no when false")

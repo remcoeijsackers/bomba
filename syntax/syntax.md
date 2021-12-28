@@ -27,10 +27,4 @@
 
 `STARTL PRINT(i) FORE i in b ENDL`
 
-#Goto
 
-#Data structures
-
-#Architecture
-
-EXIT

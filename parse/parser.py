@@ -11,7 +11,7 @@ Statement = collections.namedtuple('Statement', ['operation', 'arguments'])
 
 class MainParser(Parser):
     tokens = MainLexer.tokens
-    #start = "bmba"
+
     precedence = (
         ('nonassoc', IF, THEN),
         ('left', EQ),
@@ -21,46 +21,29 @@ class MainParser(Parser):
     def __init__(self):
         self.ids = { }
 
-    @_('LPAREN ID EQ ID RPAREN')
+    @_('LPAREN ID EQ ID RPAREN',
+        'LPAREN ID LE ID RPAREN',
+        'LPAREN ID LT ID RPAREN',
+        'LPAREN ID GE ID RPAREN',
+        'LPAREN ID GT ID RPAREN'
+    )
     def statement(self, p):
-        return p.ID0 == p.ID1
-
-    @_('LPAREN ID LE ID RPAREN')
-    def statement(self, p):
-        return p.ID0 <= p.ID1
-
-    @_('LPAREN ID LT ID RPAREN')
-    def statement(self, p):
-        return p.ID0 < p.ID1
-
-    @_('LPAREN ID GE ID RPAREN')
-    def statement(self, p):
-        return p.ID0 >= p.ID1
-
-    @_('ID GT ID')
-    def expr(self, p):
-        return p.ID0 > p.ID1
+        if p[2] == '==':
+            return p.ID0 == p.ID1
+        if p[2] == '<=':
+            return p.ID0 <= p.ID1
+        if p[2] == '<':
+            return p.ID0 < p.ID1
+        if p[2] == '>=':
+            return p.ID0 >= p.ID1
+        if p[2] == '>':
+            return p.ID0 > p.ID1
 
     @_('statement')
     def statements(self, parsed):
         if parsed.statement:
             return parsed.statement
 
-    @_('statements COLON statement')
-    def statements(self, parsed):
-        parsed.statements.append(parsed.statement)
-        return parsed.statements
-
-    @_(
-        'statements COLON empty',
-        'empty COLON statements',
-    )
-    def statements(self, parsed):
-        return parsed.statements
-
-    @_('')
-    def empty(self, parsed):
-        pass
 
     @_('IF LPAREN expr RPAREN THEN statements')
     def statement(self, parsed):
@@ -90,17 +73,13 @@ class MainParser(Parser):
         self.ids[p.ID] = p.expr
         return p.expr
         
-    @_('expr PLUS term')
+    @_('expr PLUS term',
+        'expr MINUS term')
     def expr(self, p):
-        return p.expr + p.term
-
-    @_('expr MINUS term')
-    def expr(self, p):
-        return p.expr - p.term
-
-    @_('expr LT term')
-    def statement(self, p):
-        return p.expr
+        if p[0] == '+':
+            return p.expr + p.term
+        if p[0] == '-':
+            return p.expr - p.term
 
     @_('term')
     def expr(self, p):
@@ -110,13 +89,13 @@ class MainParser(Parser):
     def statement(self, p):
         return p.expr
 
-    @_('term TIMES factor')
+    @_('term TIMES factor',
+    'term DIVIDE factor')
     def term(self, p):
-        return p.term * p.factor
-
-    @_('term DIVIDE factor')
-    def term(self, p):
-        return p.term / p.factor
+        if p[1] == '*':
+            return p.term * p.factor
+        if p[1] == '/':
+            return p.term / p.factor
 
     @_('factor')
     def term(self, p):
@@ -126,13 +105,13 @@ class MainParser(Parser):
     def factor(self, p):
         return p.NUMBER
 
+    @_('ID GT ID')
+    def expr(self, p):
+        return p.ID0 > p.ID1
+
     @_('LPAREN expr RPAREN')
     def factor(self, p):
         return p.expr
-
-    @_("START_L NUMBER END_L")
-    def expr(self, p):
-        return p.NUMBER
 
     @_(
         'NUMBER',
@@ -146,10 +125,10 @@ class MainParser(Parser):
         try:
             return self.ids[p.ID]
         except LookupError:
-            if p[0] == 'EXIT':
-                print("EXIT")
-                exit()
-            else:
-                print('Undefined name {}'.format(p))
-                return 0
-            
+            print('Undefined name {}'.format(p))
+            return 0
+
+    @_('EXIT')
+    def expr(self, p):
+        print("EXIT")
+        exit()
