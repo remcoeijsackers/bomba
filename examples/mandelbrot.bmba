@@ -1,0 +1,25 @@
+# ASCII Mandelbrot set.
+let chars = " .:-=+*#%@"
+let width = 70
+let height = 28
+let max_iter = 40
+
+for row in range(height) {
+  let line = []
+  let y = ((row + 0.5) / height) * 2.4 - 1.2
+  for col in range(width) {
+    let x = (col / width) * 3.4 - 2.4
+    let zx = 0.0
+    let zy = 0.0
+    let i = 0
+    while zx * zx + zy * zy < 4 and i < max_iter {
+      let t = zx * zx - zy * zy + x
+      zy = 2 * zx * zy + y
+      zx = t
+      i += 1
+    }
+    let shade = i * (len(chars) - 1) // max_iter
+    push(line, chars[shade])
+  }
+  print(join(line))
+}

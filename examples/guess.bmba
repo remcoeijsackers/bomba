@@ -1,0 +1,29 @@
+# Guess the number: reads your guesses with input().
+# In the playground, put one guess per line in the Input box.
+let secret = math.randint(1, 100)
+let tries = 0
+print("I'm thinking of a number between 1 and 100.")
+
+while true {
+  let answer = input("Your guess: ")
+  if answer == nil {
+    print("Out of guesses - it was {secret}.")
+    break
+  }
+  let guess = 0
+  try {
+    guess = int(answer)
+  } catch {
+    print("'{answer}' is not a number, try again.")
+    continue
+  }
+  tries += 1
+  if guess < secret {
+    print("Higher!")
+  } elif guess > secret {
+    print("Lower!")
+  } else {
+    print("Yes! {secret} in {tries} tries.")
+    break
+  }
+}

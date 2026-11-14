@@ -1,0 +1,7 @@
+# Code can be split over files with import (paths are relative to this file).
+import "lib/text"
+
+print(title("the bomba programming language"))
+for s in ["Never odd or even", "bomba"] {
+  print("'{s}' is a palindrome:", is_palindrome(s))
+}

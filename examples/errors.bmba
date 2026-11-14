@@ -1,0 +1,40 @@
+# Errors: runtime errors and thrown values can both be caught.
+
+fn safe_divide(a, b) {
+  try {
+    return a / b
+  } catch e {
+    print("  caught {e.type}: {e.message}")
+    return nil
+  }
+}
+print("10 / 2 =", safe_divide(10, 2))
+print("10 / 0 =", safe_divide(10, 0))
+
+fn withdraw(balance, amount) {
+  if amount > balance {
+    throw {code: "INSUFFICIENT", need: amount - balance}
+  }
+  return balance - amount
+}
+
+try {
+  print("left:", withdraw(100, 30))
+  print("left:", withdraw(100, 130))
+} catch e {
+  print("could not withdraw, short by {e.need} ({e.code})")
+}
+
+# Anything can be thrown, also plain strings
+try {
+  throw "something went wrong"
+} catch message {
+  print("message:", message)
+}
+
+# Errors carry their line number
+try {
+  let x = [1, 2, 3][10]
+} catch e {
+  print("{e.type} on line {e.line}: {e.message}")
+}

@@ -1,0 +1,52 @@
+# Functions are values: recursion, closures, defaults and arrow functions.
+
+fn factorial(n) {
+  if n <= 1 { return 1 }
+  return n * factorial(n - 1)
+}
+print("20! = {factorial(20)}")
+
+# Default parameter values
+fn greet(name, greeting = "Hello") {
+  return "{greeting}, {name}!"
+}
+print(greet("Ada"))
+print(greet("Linus", "Hoi"))
+
+# Closures keep their own private state
+fn make_counter(start = 0) {
+  let count = start
+  return fn() {
+    count += 1
+    return count
+  }
+}
+let a = make_counter()
+let b = make_counter(100)
+a()
+a()
+print("a = {a()}, b = {b()}")
+
+# Arrow functions are handy with map/filter/reduce
+let squares = map(range(1, 11), fn(x) => x * x)
+let even = filter(squares, fn(x) => x % 2 == 0)
+let total = reduce(squares, fn(acc, x) => acc + x, 0)
+print("squares: {squares}")
+print("even:    {even}")
+print("sum:     {total}")
+
+# Functions that build functions
+fn compose(f, g) => fn(x) => f(g(x))
+let inc_then_double = compose(fn(x) => x * 2, fn(x) => x + 1)
+print("compose: {inc_then_double(5)}")
+
+# Memoised fibonacci with a map as cache
+let cache = {}
+fn fib(n) {
+  if n < 2 { return n }
+  if n in cache { return cache[n] }
+  let result = fib(n - 1) + fib(n - 2)
+  cache[n] = result
+  return result
+}
+print("fib(90) = {fib(90)}")

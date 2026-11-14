@@ -1,0 +1,73 @@
+# A quick tour of bomba. Run it with:  python -m bomba examples/tour.bmba
+
+fn section(title) {
+  print("")
+  print("== {title} " + "=" * (40 - len(title)))
+}
+
+section("values")
+let answer = 42
+let pi = 3.14159
+let greeting = "hallo"
+let ready = true
+let nothing = nil
+print(answer, pi, greeting, ready, nothing)
+print("types:", map([answer, pi, greeting, ready, nothing, [], {}, print], type))
+
+section("strings")
+let who = "bomba"
+print("Interpolation: {who} has {len(who)} letters, upper: {upper(who)}")
+print('Single quotes are literal: {who}')
+print("Slices: {who[0]} {who[1:3]} {who[-2:]}, repeat: {"ab" * 3}")
+
+section("math")
+print("7 / 2 = {7 / 2}, 7 // 2 = {7 // 2}, 7 % 2 = {7 % 2}, 2 ** 16 = {2 ** 16}")
+print("sqrt(2) ~ {round(math.sqrt(2), 4)}, pi ~ {round(math.pi, 5)}")
+
+section("lists")
+let xs = [5, 3, 8, 1]
+push(xs, 7)
+print("xs = {xs}, sorted = {sort(xs)}, sum = {sum(xs)}, max = {max(xs)}")
+print("doubled = {map(xs, fn(x) => x * 2)}, odd = {filter(xs, fn(x) => x % 2 == 1)}")
+
+section("maps")
+let car = {brand: "Porsche", model: "911", year: 1964}
+car.colour = "silver"
+for key, val in car {
+  print("  {pad(key, -7)} {val}")
+}
+
+section("control flow")
+for n in range(1, 6) {
+  if n == 3 { continue }
+  let kind = n % 2 == 0 and "even" or "odd"
+  print("  {n} is {kind}")
+}
+let countdown = 3
+while countdown > 0 {
+  print("  {countdown}...")
+  countdown -= 1
+}
+print("  liftoff!")
+
+section("functions & closures")
+fn make_multiplier(factor) => fn(x) => x * factor
+let triple = make_multiplier(3)
+print("triple(14) = {triple(14)}")
+fn greet(name, punctuation = "!") => "Hi {name}{punctuation}"
+print(greet("Remco"), greet("there", "?"))
+
+section("errors")
+try {
+  let broken = {}["missing"]
+} catch e {
+  print("caught {e.type} on line {e.line}")
+}
+try {
+  throw "custom problem"
+} catch problem {
+  print("caught thrown value: {problem}")
+}
+
+print("")
+print("That was the tour - see the other examples for bigger programs.")

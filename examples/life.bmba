@@ -1,0 +1,44 @@
+# Conway's Game of Life: a glider on a small wrapping board.
+let W = 12
+let H = 8
+
+fn empty() => map(range(H), fn(_) => [false] * W)
+
+fn show(board, gen) {
+  print("generation {gen}")
+  for row in board {
+    print(join(map(row, fn(c) => c and "#" or "."), " "))
+  }
+  print("")
+}
+
+fn neighbours(board, r, c) {
+  let n = 0
+  for dr in [-1, 0, 1] {
+    for dc in [-1, 0, 1] {
+      if dr == 0 and dc == 0 { continue }
+      if board[(r + dr) % H][(c + dc) % W] { n += 1 }
+    }
+  }
+  return n
+}
+
+fn step(board) {
+  let next = empty()
+  for r in range(H) {
+    for c in range(W) {
+      let n = neighbours(board, r, c)
+      next[r][c] = n == 3 or (board[r][c] and n == 2)
+    }
+  }
+  return next
+}
+
+let board = empty()
+for cell in [[0, 1], [1, 2], [2, 0], [2, 1], [2, 2]] {
+  board[cell[0]][cell[1]] = true
+}
+for gen in range(4) {
+  show(board, gen)
+  board = step(board)
+}

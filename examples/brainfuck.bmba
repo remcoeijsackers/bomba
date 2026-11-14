@@ -1,0 +1,33 @@
+# A Brainfuck interpreter written in bomba: a language running a language.
+fn run_bf(code) {
+  # pre-compute matching brackets
+  let jumps = {}
+  let stack = []
+  for i, c in code {
+    if c == "[" { push(stack, i) }
+    if c == "]" {
+      let j = pop(stack)
+      jumps[i] = j
+      jumps[j] = i
+    }
+  }
+  let tape = [0] * 300
+  let ptr = 0
+  let pc = 0
+  let out = []
+  while pc < len(code) {
+    let c = code[pc]
+    if c == ">" { ptr += 1 }
+    elif c == "<" { ptr -= 1 }
+    elif c == "+" { tape[ptr] = (tape[ptr] + 1) % 256 }
+    elif c == "-" { tape[ptr] = (tape[ptr] - 1) % 256 }
+    elif c == "." { push(out, chr(tape[ptr])) }
+    elif c == "[" and tape[ptr] == 0 { pc = jumps[pc] }
+    elif c == "]" and tape[ptr] != 0 { pc = jumps[pc] }
+    pc += 1
+  }
+  return join(out)
+}
+
+let hello = "++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++."
+print(run_bf(hello))

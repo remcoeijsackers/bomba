@@ -1,0 +1,44 @@
+# Lists and maps.
+
+let fruits = ["apple", "banana", "cherry"]
+push(fruits, "date")
+print(fruits, "has", len(fruits), "items")
+print("first: {fruits[0]}, last: {fruits[-1]}, middle: {fruits[1:3]}")
+
+for i, fruit in fruits {
+  print("{i + 1}. {upper(fruit[0])}{fruit[1:]}")
+}
+
+let scores = {alice: 92, bob: 78, carol: 85}
+scores.dave = 64
+scores["erin"] = 99
+for name, score in scores {
+  let bar = "#" * (score // 10)
+  print("{pad(name, -6)} {pad(score, 3)} {bar}")
+}
+
+let best = sort(keys(scores), fn(n) => -scores[n])
+print("ranking:", join(best, " > "))
+print("average:", round(sum(values(scores)) / len(scores), 1))
+print("has bob?", "bob" in scores, "| has zed?", "zed" in scores)
+print("zed or default:", get(scores, "zed", 0))
+
+# Word frequencies
+let text = "the quick brown fox jumps over the lazy dog the end"
+let freq = {}
+for word in split(text) {
+  freq[word] = get(freq, word, 0) + 1
+}
+print("word counts:", freq)
+
+# Nested data
+let team = {
+  name: "bomba",
+  members: [
+    {name: "Ada", skills: ["math", "engines"]},
+    {name: "Grace", skills: ["compilers"]},
+  ],
+}
+for m in team.members {
+  print("{m.name} knows {join(m.skills, " and ")}")
+}

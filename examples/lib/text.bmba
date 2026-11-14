@@ -1,0 +1,9 @@
+# A tiny module, used by modules.bmba.
+fn title(s) {
+  return join(map(split(s), fn(w) => upper(w[0]) + lower(w[1:])), " ")
+}
+
+fn is_palindrome(s) {
+  let clean = join(filter(split(lower(s), ""), fn(c) => c != " "))
+  return clean == reverse(clean)
+}

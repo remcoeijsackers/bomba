@@ -1,0 +1,16 @@
+# Quicksort, written recursively.
+fn quicksort(xs) {
+  if len(xs) <= 1 { return xs }
+  let pivot = xs[len(xs) // 2]
+  let smaller = filter(xs, fn(x) => x < pivot)
+  let same = filter(xs, fn(x) => x == pivot)
+  let bigger = filter(xs, fn(x) => x > pivot)
+  return quicksort(smaller) + same + quicksort(bigger)
+}
+
+math.seed(7)
+let numbers = map(range(15), fn(_) => math.randint(1, 99))
+print("before:", numbers)
+print("after: ", quicksort(numbers))
+assert(quicksort(numbers) == sort(numbers), "quicksort disagrees with sort()")
+print("matches the builtin sort()")
