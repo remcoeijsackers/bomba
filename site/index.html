@@ -289,7 +289,11 @@ function append(text, cls) {
 function startWorker() {
   workerReady = false;
   $("run").disabled = true;
-  worker = new Worker("worker.js");
+  worker = new Worker("worker.js", { type: "module" });
+  worker.onerror = (e) => {
+    setStatus("Could not start the interpreter", "err");
+    append("Could not start the interpreter: " + (e.message || "worker failed to load") + "\n", "error");
+  };
   worker.onmessage = ({ data }) => {
     if (data.type === "ready") {
       workerReady = true;

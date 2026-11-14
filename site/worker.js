@@ -1,7 +1,8 @@
 // Runs bomba inside Pyodide, off the main thread, so a slow or endless
 // program never freezes the page (the page can simply terminate this worker).
+// Must be started as a module worker: Pyodide no longer supports classic workers.
 const PYODIDE = "https://cdn.jsdelivr.net/npm/pyodide@314.0.8/";
-importScripts(PYODIDE + "pyodide.js");
+import { loadPyodide } from "https://cdn.jsdelivr.net/npm/pyodide@314.0.8/pyodide.mjs";
 
 const GLUE = `
 import json
