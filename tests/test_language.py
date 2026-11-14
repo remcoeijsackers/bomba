@@ -270,6 +270,17 @@ class TestBuiltins(unittest.TestCase):
         self.assertEqual(value("min([3, 1, 2]) + max(4, 9)"), 10)
         self.assertEqual(value("round(2.567, 2)"), 2.57)
 
+    def test_seed_is_per_interpreter(self):
+        a = Interpreter(out=lambda s: None)
+        a.run("math.seed(7)")
+        first = a.run("math.randint(1, 1000000)")
+        b = Interpreter(out=lambda s: None)
+        b.run("math.seed(7)")
+        self.assertEqual(b.run("math.randint(1, 1000000)"), first)
+        c = Interpreter(out=lambda s: None)  # unseeded: must not continue a's sequence
+        self.assertNotEqual([c.run("math.randint(1, 1000000)") for _ in range(3)],
+                            [a.run("math.randint(1, 1000000)") for _ in range(3)])
+
     def test_builtin_arity(self):
         with self.assertRaises(BombaError) as cm:
             run("len()")
@@ -284,7 +295,7 @@ class TestBuiltins(unittest.TestCase):
             return answers.pop(0)
 
         interp = Interpreter(out=out.append, read=read)
-        interp.run("math.seed(1)")
+        interp.run("math.seed(1)")  # seeds this interpreter only
         interp.run_file(os.path.join(EXAMPLES, "guess.bmba"))
         text = "\n".join(out)
         self.assertIn("'abc' is not a number", text)

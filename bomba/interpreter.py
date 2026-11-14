@@ -1,6 +1,7 @@
 """Tree-walking interpreter."""
 
 import os
+import random
 
 from . import nodes as N
 from .errors import BombaError, BombaThrow
@@ -63,6 +64,7 @@ class Interpreter:
         self.read = read or input
         self.max_depth = max_depth
         self.depth = 0
+        self.rng = random.Random()  # per interpreter, so math.seed() never leaks between runs
         self.builtins = Env()
         install(self)
         self.globals = Env(self.builtins)

@@ -1,7 +1,6 @@
 """Built-in functions and the ``math`` module."""
 
 import math
-import random
 import time
 
 from .errors import BombaError
@@ -451,7 +450,7 @@ def _math_fn(name, fn, arity=1):
     return Builtin(f"math.{name}", call)
 
 
-def math_module():
+def math_module(rng):
     m = {
         "pi": math.pi,
         "e": math.e,
@@ -468,7 +467,7 @@ def math_module():
     def rand(interp, args):
         if args:
             raise err("TypeError", "math.random() takes no arguments")
-        return random.random()
+        return rng.random()
 
     def randint(interp, args):
         if len(args) != 2:
@@ -476,10 +475,10 @@ def math_module():
         a, b = (need(x, ["int"], "math.randint") for x in args)
         if a > b:
             raise err("ValueError", "math.randint(a, b) needs a <= b")
-        return random.randint(a, b)
+        return rng.randint(a, b)
 
     def seed(interp, args):
-        random.seed(args[0] if args else None)
+        rng.seed(args[0] if args else None)
 
     m["random"] = Builtin("math.random", rand)
     m["randint"] = Builtin("math.randint", randint)
@@ -490,4 +489,4 @@ def math_module():
 def install(interp):
     for name, fn in REGISTRY.items():
         interp.builtins.define(name, Builtin(name, fn))
-    interp.builtins.define("math", math_module())
+    interp.builtins.define("math", math_module(interp.rng))

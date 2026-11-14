@@ -43,8 +43,7 @@ let ready = (async () => {
     fs.writeFile(path, ex.source);
   }
   pyodide.runPython(`
-import os, random, sys
-random.seed()  # Pyodide starts from a snapshot, so reseed from real entropy
+import os, sys
 sys.path.insert(0, "/home/pyodide")
 sys.setrecursionlimit(3000)
 os.chdir("/home/pyodide/examples")
