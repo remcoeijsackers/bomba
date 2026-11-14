@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Run tests
+        run: python -m unittest discover -s tests -v
+      - name: Run every example
+        run: |
+          for f in examples/*.bmba; do
+            echo "::group::$f"
+            python -m bomba "$f" < /dev/null
+            echo "::endgroup::"
+          done
+      - name: Install as a package
+        run: |
+          pip install .
+          cd /tmp && bomba -e 'print("installed bomba works: {1 + 1 == 2}")'

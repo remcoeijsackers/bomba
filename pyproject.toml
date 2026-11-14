@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bomba-lang"
+dynamic = ["version"]
+description = "bomba: a small, friendly scripting language"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [{name = "Remco Eijsackers"}]
+keywords = ["programming-language", "interpreter", "scripting", "education"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Topic :: Software Development :: Interpreters",
+]
+
+[project.urls]
+Homepage = "https://github.com/remcoeijsackers/bomba"
+Playground = "https://remcoeijsackers.github.io/bomba/"
+
+[project.scripts]
+bomba = "bomba.__main__:main"
+
+[tool.setuptools]
+packages = ["bomba"]
+
+[tool.setuptools.dynamic]
+version = {attr = "bomba.__version__"}
