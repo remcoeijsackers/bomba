@@ -3,6 +3,7 @@
     python scripts/build_site.py [output-dir]
 """
 
+import hashlib
 import json
 import os
 import shutil
@@ -49,10 +50,24 @@ def main(out_dir):
 
     examples.sort(key=order)
 
+    bundle = json.dumps({"modules": modules, "examples": examples})
     with open(os.path.join(out_dir, "bundle.json"), "w", encoding="utf-8") as f:
-        json.dump({"modules": modules, "examples": examples}, f)
-    for name in ("index.html", "worker.js"):
-        shutil.copy(os.path.join(ROOT, "site", name), out_dir)
+        f.write(bundle)
+
+    # Cache-bust: browsers (and GitHub Pages' CDN) cache these files, so give
+    # every build its own URLs to keep page, worker and bundle in sync.
+    with open(os.path.join(ROOT, "site", "worker.js"), encoding="utf-8") as f:
+        worker = f.read()
+    with open(os.path.join(ROOT, "site", "index.html"), encoding="utf-8") as f:
+        page = f.read()
+    version = hashlib.sha256((bundle + worker + page).encode()).hexdigest()[:10]
+    worker = worker.replace('fetch("bundle.json")', f'fetch("bundle.json?v={version}")')
+    page = page.replace('fetch("bundle.json")', f'fetch("bundle.json?v={version}")')
+    page = page.replace('new Worker("worker.js"', f'new Worker("worker.js?v={version}"')
+    with open(os.path.join(out_dir, "worker.js"), "w", encoding="utf-8") as f:
+        f.write(worker)
+    with open(os.path.join(out_dir, "index.html"), "w", encoding="utf-8") as f:
+        f.write(page)
     open(os.path.join(out_dir, ".nojekyll"), "w").close()
     print(f"built {out_dir}: {len(modules)} modules, {len(examples)} examples")
 
